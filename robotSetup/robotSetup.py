@@ -39,7 +39,7 @@ from isaaclab.sensors.camera import CameraCfg
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 
-UR5E_USD = sim_utils.UsdFileCfg(usd_path=f"{ROOT}/robotSetup/test.usd")
+UR5E_USD = sim_utils.UsdFileCfg(usd_path=f"{ROOT}/robotSetup/UR5E_RSD455.usd")
 
 ROBOT_CFG = ArticulationCfg(
     spawn=UR5E_USD,
@@ -171,7 +171,16 @@ def run_simulation(sim, scene, ur5e, camera):
             rgb_tensor = camera.data.output["rgb"][0]  # (H, W, 4), float32 [0,1]
             rgb_frame = (rgb_tensor.cpu().numpy() * 255).astype("uint8")
             rgb_frame = rgb_frame[:, :, :3]  # drop alpha channel
+
+            #cv2.imshow("Isaac Lab Camera", rgb_frame)
+
+            #if cv2.waitKey(1) & 0xFF == ord("q"):
+                #break
+
+        
         yield rgb_frame
+    
+    cv2.destroyAllWindows()
 
 # ------------------------------------------------------------------------------
 # Main
@@ -198,9 +207,12 @@ def main():
         if rgb_frame is not None:
             # Example: print shape, or pass to AI
             print("Frame shape:", rgb_frame.shape)
+            print("frame: ", rgb_frame)
             # later: process with AI instead of printing
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
     main()
     simulation_app.close()
+
+    
